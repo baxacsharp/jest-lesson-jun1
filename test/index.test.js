@@ -63,18 +63,6 @@ describe("Checking application main endpoints", () => {
     expect(response.status).toBe(400)
     expect(response.body._id).not.toBeDefined()
   })
-  it("should throw error if products._id doesnt exist on existing products", async () => {
-    const response = await request.get("/products/:id")
-    expect(response.status).toBe(404)
-    expect(request._id).not.toBeDefined()
-  })
-  it("should accept the requests and update the name", async () => {
-    const response = await request.put("/products/:id")
-    expect(response.status).toBe(203)
-    expect(request.body).toBeDefined()
-    expect(response.body.name).toEqual(validData.description)
-    expect(response.body.name).toStrictEqual({ String })
-  })
   it("should test that the /products endpoint is returning valid data after creating", async () => {
     const response = await request.post("/products").send(validData)
 
@@ -97,16 +85,28 @@ describe("Checking application main endpoints", () => {
     expect(included).toBe(true)
   })
 })
+it("should accept the requests and update the name", async () => {
+  const response = await request.put("/products/:id")
+  expect(response.status).toBe(203)
+  expect(request.body).toBeDefined()
+  expect(response.body.name).toEqual(validData.description)
+  expect(response.body.name).toStrictEqual({ String })
+})
 it("should test whether the id of the product is matching,if so delete them", async () => {
   const response = await request.delete("/products/:id")
 
   expect(response.status).toBe(204)
   expect(response.body._id).toBeDefined()
 })
+it("should throw error if products._id doesnt exist on existing products", async () => {
+  const response = await request.get("/products/:id")
+  expect(response.status).toBe(404)
+  expect(request._id).not.toBeDefined()
+})
 beforeAll((done) => {
   console.log(process.env.ATLAS_URL)
   mongoose
-    .connect(process.env.ATLAS_URL + "test", { useNewUrlParser: true })
+    .connect(process.env.ATLAS_URL + "/test", { useNewUrlParser: true })
     .then(() => {
       console.log("Successfully connected to Atlas in test.")
       done()
